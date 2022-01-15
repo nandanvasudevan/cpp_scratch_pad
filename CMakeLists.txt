@@ -10,6 +10,9 @@ include(./build/conan/Findspdlog.cmake)
 
 include_directories(./include)
 
+# Set global property (all targets are impacted)
+set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
+
 conan_basic_setup()
 set(LIBS lib)
 
