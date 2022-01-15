@@ -17,46 +17,54 @@ TEST_CASE("Phone number", "[simple]")
 {
 	SECTION("IN")
 	{
-		SECTION("No spaces")
 		{
 			static const std::string sMobileNumber = "+917907284910";
 			const bool bIsValid = isValidPhoneNumber_IN(sMobileNumber);
 
 			REQUIRE(bIsValid);
 
-			BENCHMARK("IN") {
-				                return isValidPhoneNumber_IN(sMobileNumber);
-			                };
+			BENCHMARK("No spaces") {
+				                       return isValidPhoneNumber_IN(sMobileNumber);
+			                       };
 		}
 
-		SECTION("With spaces")
 		{
 			static const std::string sMobileNumber = "+91 79072 84910";
 			const bool bIsValid = isValidPhoneNumber_IN(sMobileNumber);
 
 			REQUIRE(bIsValid);
 
-			BENCHMARK("IN") {
-				                return isValidPhoneNumber_IN(sMobileNumber);
-			                };
+			BENCHMARK("With spaces") {
+				                         return isValidPhoneNumber_IN(sMobileNumber);
+			                         };
 		}
 
-		SECTION("With -")
 		{
 			static const std::string sMobileNumber = "+91-79072-84910";
 			const bool bIsValid = isValidPhoneNumber_IN(sMobileNumber);
 
 			REQUIRE(bIsValid);
 
-			BENCHMARK("IN") {
-				                return isValidPhoneNumber_IN(sMobileNumber);
-			                };
+			BENCHMARK("With -") {
+				                    return isValidPhoneNumber_IN(sMobileNumber);
+			                    };
+		}
+
+		{
+			static const std::string sMobileNumber = "+91 79072-84910";
+			const bool bIsValid = isValidPhoneNumber_IN(sMobileNumber);
+
+			REQUIRE(bIsValid);
+
+			BENCHMARK("With spaces & -") {
+				                             return isValidPhoneNumber_IN(sMobileNumber);
+			                             };
 		}
 	}
 
 }
 
-TEST_CASE("Now is the winter", "[sentence]")
+TEST_CASE("Now is the winter", CATCH_CAN_SKIP_THIS + "[sentence]")
 {
 	static const std::string sExpectOutput = "summer by this sun";
 	BENCHMARK_ADVANCED(fmt::format("{}",
@@ -85,6 +93,7 @@ TEST_CASE("Now is the winter", "[sentence]")
 //************************************************************************************
 static bool
 isValidPhoneNumber_IN(const std::string &sPhoneNumber) {
+#if 0
 	static const std::regex rePhoneNumber_IN_withoutSpace{R"((\+91)\d{10})"};
 	static const std::regex rePhoneNumber_IN_withSpace{R"((\+91)(\s)?\d{5}(\s)?\d{5})"};
 	static const std::regex rePhoneNumber_IN_withHyphen{R"((\+91)-?\d{5}-?\d{5})"};
@@ -106,6 +115,10 @@ isValidPhoneNumber_IN(const std::string &sPhoneNumber) {
 		}
 
 	}();
+#else
+	static const std::regex
+			re{R"((\+91)(\s|-)?\d{5}(\s|-)?\d{5})"};
+#endif
 
 	return std::regex_match(sPhoneNumber, re);
 }
