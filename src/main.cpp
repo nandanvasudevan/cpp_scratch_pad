@@ -3,8 +3,9 @@
 #include <fmt/format.h>
 #include <catch2/catch_all.hpp>
 
-static constexpr int insertion_count = 100;
+static constexpr int insertion_count = 50'000;
 static constexpr int index_to_access = insertion_count - 1;
+static constexpr int index_to_search = insertion_count - 1;
 
 template<typename T>
 void
@@ -28,14 +29,24 @@ TEST_CASE("For unordered map")
 		REQUIRE(iInserted == unordered_mapInt.size());
 	}
 
-	BENCHMARK(fmt::format("Insert {} elements", insertion_count))
+	BENCHMARK(fmt::format(std::locale("en_IN.UTF-8"),
+	                      "Insert {:L} elements",
+	                      insertion_count))
 				{
 					return insert(unordered_mapInt, insertion_count);
 				};
 
-	BENCHMARK(fmt::format("Access {}th element", index_to_access))
+	BENCHMARK(fmt::format(std::locale("en_IN.UTF-8"),
+	                      "Access {:L}th element",
+	                      index_to_access))
 				{
 					return unordered_mapInt[index_to_access];
+				};
+	BENCHMARK(fmt::format(std::locale("en_IN.UTF-8"),
+	                      "Find {:L}th index",
+	                      index_to_search))
+				{
+					return mapInt.find(index_to_search);
 				};
 }
 
@@ -50,13 +61,23 @@ TEST_CASE("For map")
 		REQUIRE(iInserted == mapInt.size());
 	}
 
-	BENCHMARK(fmt::format("Insert {} elements", insertion_count))
+	BENCHMARK(fmt::format(std::locale("en_IN.UTF-8"),
+	                      "Insert {:L} elements",
+	                      insertion_count))
 				{
 					return insert(mapInt, insertion_count);
 				};
 
-	BENCHMARK(fmt::format("Access {}th element", index_to_access))
+	BENCHMARK(fmt::format(std::locale("en_IN.UTF-8"),
+	                      "Access {:L}th element",
+	                      index_to_access))
 				{
 					return mapInt[index_to_access];
+				};
+	BENCHMARK(fmt::format(std::locale("en_IN.UTF-8"),
+	                      "Find {:L}th index",
+	                      index_to_search))
+				{
+					return mapInt.find(index_to_search);
 				};
 }
