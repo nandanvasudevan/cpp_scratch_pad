@@ -5,7 +5,8 @@
 // Created at: 16/01/2022 08:49
 //
 
-#include <catch2/catch_all.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/benchmark/catch_benchmark.hpp>
 #include <ctre.hpp>
 #include <fmt/format.h>
 
