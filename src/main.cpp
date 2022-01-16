@@ -1,19 +1,23 @@
 #include <regex>
 
-#include <fmt/format.h>
 #include <catch2/catch_all.hpp>
+#include <ctre.hpp>
+#include <fmt/format.h>
 
 static const std::string CATCH_CAN_SKIP_THIS = "[.]";
 
 static bool
 isValidPhoneNumber_IN(const std::string &sPhoneNumber);
 
+static bool
+ctre_isValidPhoneNumber(std::string_view svPhoneNumber);
+
 /* Key takeaway
  * Do not use the most complicated regex for even the simplest of cases.
  * It is faster to have multiple regex patterns, simpler the expression, faster it is.
  * Just something to keep an eye out for.
  */
-TEST_CASE("Phone number", "[simple]")
+TEST_CASE("std::regex Phone number", CATCH_CAN_SKIP_THIS + "[simple]")
 {
 	SECTION("IN")
 	{
@@ -64,6 +68,54 @@ TEST_CASE("Phone number", "[simple]")
 
 }
 
+TEST_CASE("CTRE Phone number",CATCH_CAN_SKIP_THIS)
+{
+	{
+		static const std::string_view svMobileNumber = "+917907284910";
+		const bool bIsValid = ctre_isValidPhoneNumber(svMobileNumber);
+
+		REQUIRE(bIsValid);
+
+		BENCHMARK("No spaces") {
+			                       return ctre_isValidPhoneNumber(svMobileNumber);
+		                       };
+	}
+
+	{
+		static const std::string_view svMobileNumber = "+91 79072 84910";
+		const bool bIsValid = ctre_isValidPhoneNumber(svMobileNumber);
+
+		REQUIRE(bIsValid);
+
+		BENCHMARK("With spaces") {
+			                         return ctre_isValidPhoneNumber(svMobileNumber);
+		                         };
+	}
+
+	{
+		static const std::string_view svMobileNumber = "+91-79072-84910";
+		const bool bIsValid = ctre_isValidPhoneNumber(svMobileNumber);
+
+		REQUIRE(bIsValid);
+
+		BENCHMARK("With -") {
+			                    return ctre_isValidPhoneNumber(svMobileNumber);
+		                    };
+	}
+
+	{
+		static const std::string_view svMobileNumber = "+91 79072-84910";
+
+		const bool bIsValid = ctre_isValidPhoneNumber(svMobileNumber);
+
+		REQUIRE(bIsValid);
+
+		BENCHMARK("With - & space") {
+			                            return ctre_isValidPhoneNumber(svMobileNumber);
+		                            };
+	}
+}
+
 TEST_CASE("Now is the winter", CATCH_CAN_SKIP_THIS + "[sentence]")
 {
 	static const std::string sExpectOutput = "summer by this sun";
@@ -93,7 +145,7 @@ TEST_CASE("Now is the winter", CATCH_CAN_SKIP_THIS + "[sentence]")
 //************************************************************************************
 static bool
 isValidPhoneNumber_IN(const std::string &sPhoneNumber) {
-#if 0
+#if 1
 	static const std::regex rePhoneNumber_IN_withoutSpace{R"((\+91)\d{10})"};
 	static const std::regex rePhoneNumber_IN_withSpace{R"((\+91)(\s)?\d{5}(\s)?\d{5})"};
 	static const std::regex rePhoneNumber_IN_withHyphen{R"((\+91)-?\d{5}-?\d{5})"};
@@ -121,4 +173,15 @@ isValidPhoneNumber_IN(const std::string &sPhoneNumber) {
 #endif
 
 	return std::regex_match(sPhoneNumber, re);
+}
+
+//************************************************************************************
+// Created by: nandanv
+// Created at: 16-Jan-2022 07:01
+// Comments:
+//
+//************************************************************************************
+static bool
+ctre_isValidPhoneNumber(std::string_view svPhoneNumber) {
+	return ctre::match<"((\\+91)(\\s|-)?\\d{5}(\\s|-)?\\d{5})">(svPhoneNumber);
 }

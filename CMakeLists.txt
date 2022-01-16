@@ -16,7 +16,7 @@ set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 conan_basic_setup()
 set(LIBS lib)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/withCTRE.cpp)
 
 find_package(fmt)
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
@@ -33,6 +33,6 @@ set_target_properties(catch2 PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/include/catch2/"
         )
 
-add_executable(${PROJECT_NAME}_test src/main.cpp)
+add_executable(${PROJECT_NAME}_test src/main.cpp src/withCTRE.cpp)
 target_link_libraries(${PROJECT_NAME}_test PRIVATE catch2Main catch2)
 target_link_libraries(${PROJECT_NAME}_test PRIVATE fmt::fmt)

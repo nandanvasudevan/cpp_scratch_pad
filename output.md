@@ -1,3 +1,64 @@
+# CTRE vs std::regex
+```
+-------------------------------------------------------------------------------
+std::regex Phone number
+  IN
+-------------------------------------------------------------------------------
+/home/nandanv/code/C++/scratch_pad/src/main.cpp:22
+...............................................................................
+
+benchmark name                       samples       iterations    estimated
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+No spaces                                      100            20      7.484 ms 
+                                        3.73052 us    3.70071 us    3.78884 us 
+                                        205.463 ns     123.46 ns    383.109 ns 
+                                                                               
+With spaces                                    100            18     7.4322 ms 
+                                        4.29475 us    4.24527 us    4.36524 us 
+                                        299.407 ns     226.59 ns    388.988 ns 
+                                                                               
+With -                                         100            20      7.388 ms 
+                                        3.65157 us    3.63367 us    3.68155 us 
+                                        115.523 ns    79.5987 ns    196.244 ns 
+                                                                               
+With spaces & -                                100            16     7.3072 ms 
+                                        4.67185 us    4.60889 us    4.77102 us 
+                                        397.467 ns    288.963 ns     634.91 ns 
+                                                                               
+
+-------------------------------------------------------------------------------
+CTRE Phone number
+-------------------------------------------------------------------------------
+/home/nandanv/code/C++/scratch_pad/src/main.cpp:71
+...............................................................................
+
+benchmark name                       samples       iterations    estimated
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+No spaces                                      100            71     7.1994 ms 
+                                        1.09503 us    1.08961 us    1.10165 us 
+                                         30.457 ns    25.3222 ns    37.4321 ns 
+                                                                               
+With spaces                                    100            79      7.268 ms 
+                                        940.681 ns    936.724 ns    949.823 ns 
+                                         29.125 ns    14.9878 ns    60.3481 ns 
+                                                                               
+With -                                         100            70      7.203 ms 
+                                        1.06936 us      1.063 us    1.07572 us 
+                                        32.3717 ns    26.2117 ns    43.4359 ns 
+                                                                               
+With - & space                                 100            77     7.2149 ms 
+                                        1.03563 us     1.0249 us    1.04922 us 
+                                        61.4934 ns    49.8782 ns    79.2097 ns 
+                                                                               
+
+===============================================================================
+All tests passed (8 assertions in 2 test cases)
+```
+
 # With the minimum required regex for each type
 ## Run 1
 ```
