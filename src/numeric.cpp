@@ -5,6 +5,9 @@
 // Created at: 19/01/2022 04:28
 //
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+
 #include <string_view>
 #include <vector>
 
@@ -13,26 +16,31 @@
 #include <fmt/printf.h>
 #include <fmt/format.h>
 
+#pragma GCC diagnostic pop
+
 static const std::string CATCH_CAN_SKIP_THIS = "";
 //static const std::string CATCH_CAN_SKIP_THIS = "[.]";
 
 static const std::string sTestCase_Numeric = "[numeric]";
+static constexpr size_t DEFAULT_CONTAINER_SIZE = 10;
+
+using type_t = int;
 
 template<typename container_t>
 void
 print(const container_t &container) {
-//	fmt::print("\r");
-//
-//	for (const auto &value: container) {
-//		fmt::print("{:04} ", value);
-//	}
-//
-//	fmt::print("\n");
+	fmt::print("\r");
+
+	for (const auto &value: container) {
+		fmt::print("{:04} ", value);
+	}
+
+	fmt::print("\n");
 }
 
 TEST_CASE("iota", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 {
-	std::vector<int> vSeries(10);
+	std::vector<type_t> vSeries(DEFAULT_CONTAINER_SIZE);
 
 	BENCHMARK("iota")
 				{
@@ -44,18 +52,18 @@ TEST_CASE("iota", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 
 TEST_CASE("generate", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 {
-	std::vector<int> vSeries(10);
+	std::vector<type_t> vSeries(DEFAULT_CONTAINER_SIZE);
 	BENCHMARK("generate")
 				{
-					std::generate(vSeries.begin(), vSeries.end(),[n
-							                                              = 0] mutable { return n += 2; });
+					std::generate(vSeries.begin(), vSeries.end(),
+					[n = 0] mutable { return n += 1; });
 				};
 	print(vSeries);
 }
 
 TEST_CASE("accumulators", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 {
-	std::vector<int> vSeries(10);
+	std::vector<type_t> vSeries(DEFAULT_CONTAINER_SIZE);
 	std::generate(vSeries.begin(), vSeries.end(),[n = 0] mutable { return n += 1; });
 
 	BENCHMARK("accumulate - add")
@@ -83,8 +91,8 @@ TEST_CASE("accumulators", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 
 TEST_CASE("adjacent_difference", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 {
-	std::vector<int> vSeries(10);
-	std::vector<int> vDiff(vSeries.size());
+	std::vector<type_t> vSeries(DEFAULT_CONTAINER_SIZE);
+	std::vector<type_t> vDiff(vSeries.size());
 	std::generate(vSeries.begin(), vSeries.end(),[n = 1] mutable { return n *= 2; });
 
 	BENCHMARK("adjacent difference")
@@ -100,8 +108,8 @@ TEST_CASE("adjacent_difference", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 
 TEST_CASE("inner_product", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 {
-	std::vector<int> vSeries(10);
-	std::vector<int> vDiff(vSeries.size());
+	std::vector<type_t> vSeries(DEFAULT_CONTAINER_SIZE);
+	std::vector<type_t> vDiff(vSeries.size());
 	std::generate(vSeries.begin(), vSeries.end(),[n = 0] mutable { return n += 2; });
 
 	std::adjacent_difference(vSeries.cbegin(),
@@ -123,22 +131,18 @@ TEST_CASE("inner_product", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 					                          vSeries.end(),
 					                          vDiff.begin(),
 					                          0,
-					                          [](int reduced, int current) {
+					                          [](type_t reduced, type_t current) {
 						                          return std::max(reduced,
 						                                          current);
 					                          },
-					                          [](int series_element,
-					                             int diff_element) {
-						                          return series_element *
-						                                 diff_element;
-					                          });
+											  std::multiplies{});
 				};
 }
 
-TEST_CASE("transform_reduce", sTestCase_Numeric)
+TEST_CASE("transform_reduce", CATCH_CAN_SKIP_THIS + sTestCase_Numeric)
 {
-	std::vector<int> vSeries(10);
-	std::vector<int> vDiff(vSeries.size());
+	std::vector<type_t> vSeries(DEFAULT_CONTAINER_SIZE);
+	std::vector<type_t> vDiff(vSeries.size());
 	std::generate(vSeries.begin(), vSeries.end(),[n = 0] mutable { return n += 2; });
 
 	std::adjacent_difference(vSeries.cbegin(),
@@ -151,7 +155,7 @@ TEST_CASE("transform_reduce", sTestCase_Numeric)
 					                             vSeries.end(),
 					                             vDiff.begin(),
 					                             0,
-					                             [](int reduced, int current) {
+					                             [](type_t reduced, type_t current) {
 						                             return std::max(reduced,
 						                                             current);
 					                             },
