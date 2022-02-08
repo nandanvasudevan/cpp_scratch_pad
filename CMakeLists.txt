@@ -10,6 +10,8 @@ include(./build/conan/Findspdlog.cmake)
 
 include_directories(./include)
 
+add_compile_options(-Wall -Wextra -Wconversion)
+
 # Set global property (all targets are impacted)
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 

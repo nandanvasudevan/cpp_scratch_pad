@@ -17,6 +17,7 @@
 #include <catch2/reporters/catch_reporter_teamcity.hpp>
 #include <catch2/reporters/catch_reporter_xml.hpp>
 #include <catch2/internal/catch_move_and_forward.hpp>
+#include <catch2/internal/catch_enforce.hpp>
 
 namespace Catch {
 
@@ -36,14 +37,16 @@ namespace Catch {
     ReporterRegistry::~ReporterRegistry() = default;
 
 
-    IStreamingReporterPtr ReporterRegistry::create( std::string const& name, IConfig const* config ) const {
+    IStreamingReporterPtr ReporterRegistry::create( std::string const& name, ReporterConfig const& config ) const {
         auto it =  m_factories.find( name );
         if( it == m_factories.end() )
             return nullptr;
-        return it->second->create( ReporterConfig( config ) );
+        return it->second->create( config );
     }
 
     void ReporterRegistry::registerReporter( std::string const& name, IReporterFactoryPtr factory ) {
+        CATCH_ENFORCE( name.find( "::" ) == name.npos,
+                       "'::' is not allowed in reporter name: '" + name + '\'' );
         m_factories.emplace(name, CATCH_MOVE(factory));
     }
     void ReporterRegistry::registerListener( IReporterFactoryPtr factory ) {
