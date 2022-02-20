@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 23)
 include(./build/conan/conanbuildinfo.cmake)
 include(./build/conan/conan_paths.cmake)
 include(./build/conan/Findfmt.cmake)
-include(./build/conan/Findspdlog.cmake)
 
 include_directories(./include)
 
