@@ -7,13 +7,13 @@ static const std::string CATCH_CAN_SKIP_THIS = "[.]";
 TEST_CASE("Format without text_style",
           "[fmt][format]")
 {
-    // Linker error
-    {
-        const std::string sTest = fmt::format("Hello!");
-    }
+    enum class EColor {
+        red, green, blue
+    };
 
-    // Works
-    {
-        const std::string sTest = fmt::format(fmt::fg(fmt::color::blue),"Hello!");
-    }
+//    const std::string sTest = fmt::to_string((int) EColor::red);
+    const std::string sTest = fmt::format("{}",
+                                          (int) EColor::red);
+
+    CHECK(sTest == "0");
 }
