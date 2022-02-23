@@ -34,11 +34,8 @@ TEST_CASE("Parse from string",
     CHECK(jsonParsed_full.contains("Image"));
     CHECK(jsonImage.contains("Width"));
 
-    /* An instance nlohmann::json::out_of_range cannot be constructed easily.
-     * However, using any standard exception instead makes the test pass
-     */
-//    CHECK_THROWS(jsonParsed_full.at("Nonexistent"),
-//                 nlohmann::json::out_of_range);
+    CHECK_THROWS_AS(jsonParsed_full.at("Nonexistent"),
+                 nlohmann::json::out_of_range);
 
     // These pass, they should not.
     CHECK_THROWS(jsonParsed_full.at("Nonexistent"),
