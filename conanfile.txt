@@ -1,7 +1,6 @@
 [requires]
-fmt/8.0.1
-spdlog/1.9.2
-ctre/3.4.1
+fmt/8.1.1
+nlohmann_json/3.10.5
 
 [generators]
 cmake
