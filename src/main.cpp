@@ -5,7 +5,10 @@
 #include <nlohmann/detail/exceptions.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_approx.hpp>
 
+static constexpr double dEpsilon_1Percent = 0.01;
+static constexpr double dEpsilon_milliPercent = dEpsilon_1Percent/1000.0;
 static const std::string CATCH_CAN_SKIP_THIS = "[.]";
 
 TEST_CASE("Parse from string",
@@ -14,7 +17,7 @@ TEST_CASE("Parse from string",
     auto jsonData = R"(
     {
         "Image": {
-            "Width":  800,
+            "Width":  800.5,
             "Height": 600,
             "Title":  "View from 15th Floor",
             "Thumbnail": {
@@ -33,13 +36,10 @@ TEST_CASE("Parse from string",
 
     CHECK(jsonParsed_full.contains("Image"));
     CHECK(jsonImage.contains("Width"));
+    CHECK(800.5 ==  Catch::Approx(jsonImage.at("Width")).epsilon(dEpsilon_milliPercent));
+    CHECK(600 == jsonImage.at("Height"));
+    CHECK_FALSE(jsonImage.at("Animated"));
 
     CHECK_THROWS_AS(jsonParsed_full.at("Nonexistent"),
-                 nlohmann::json::out_of_range);
-
-    // These pass, they should not.
-    CHECK_THROWS(jsonParsed_full.at("Nonexistent"),
-                 std::out_of_range(""));
-    CHECK_THROWS(jsonParsed_full.at("Nonexistent"),
-                 std::bad_alloc());
+                    nlohmann::json::out_of_range);
 }
