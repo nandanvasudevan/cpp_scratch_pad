@@ -5,25 +5,33 @@
 //        https://www.boost.org/LICENSE_1_0.txt)
 
 // SPDX-License-Identifier: BSL-1.0
-#ifndef CATCH_REPORTER_LISTENING_HPP_INCLUDED
-#define CATCH_REPORTER_LISTENING_HPP_INCLUDED
+#ifndef CATCH_REPORTER_MULTI_HPP_INCLUDED
+#define CATCH_REPORTER_MULTI_HPP_INCLUDED
 
 #include <catch2/interfaces/catch_interfaces_reporter.hpp>
 
 namespace Catch {
 
-    class ListeningReporter final : public IStreamingReporter {
-        using Reporters = std::vector<IStreamingReporterPtr>;
-        Reporters m_listeners;
-        IStreamingReporterPtr m_reporter = nullptr;
+    class MultiReporter final : public IStreamingReporter {
+        /*
+         * Stores all added reporters and listeners
+         *
+         * All Listeners are stored before all reporters, and individual
+         * listeners/reporters are stored in order of insertion.
+         */
+        std::vector<IStreamingReporterPtr> m_reporterLikes;
+        bool m_haveNoncapturingReporters = false;
+
+        // Keep track of how many listeners we have already inserted,
+        // so that we can insert them into the main vector at the right place
+        size_t m_insertedListeners = 0;
+
+        void updatePreferences(IStreamingReporter const& reporterish);
 
     public:
-        ListeningReporter( IConfig const* config ):
-            IStreamingReporter( config ) {
-            // We will assume that listeners will always want all assertions
-            m_preferences.shouldReportAllAssertions = true;
-        }
-
+        MultiReporter( IConfig const* config ):
+            IStreamingReporter( config )
+        {}
 
         void addListener( IStreamingReporterPtr&& listener );
         void addReporter( IStreamingReporterPtr&& reporter );
@@ -32,7 +40,7 @@ namespace Catch {
 
         void noMatchingTestCases( StringRef unmatchedSpec ) override;
         void fatalErrorEncountered( StringRef error ) override;
-        void reportInvalidArguments( StringRef arg ) override;
+        void reportInvalidTestSpec( StringRef arg ) override;
 
         void benchmarkPreparing( StringRef name ) override;
         void benchmarkStarting( BenchmarkInfo const& benchmarkInfo ) override;
@@ -62,4 +70,4 @@ namespace Catch {
 
 } // end namespace Catch
 
-#endif // CATCH_REPORTER_LISTENING_HPP_INCLUDED
+#endif // CATCH_REPORTER_MULTI_HPP_INCLUDED

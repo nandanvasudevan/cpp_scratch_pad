@@ -386,7 +386,7 @@ void ConsoleReporter::noMatchingTestCases( StringRef unmatchedSpec ) {
     m_stream << "No test cases matched '" << unmatchedSpec << "'\n";
 }
 
-void ConsoleReporter::reportInvalidArguments( StringRef arg ) {
+void ConsoleReporter::reportInvalidTestSpec( StringRef arg ) {
     m_stream << "Invalid Filter: " << arg << '\n';
 }
 
@@ -517,7 +517,7 @@ void ConsoleReporter::lazyPrintRunInfo() {
     m_stream << '\n' << lineOfChars('~') << '\n';
     Colour colour(Colour::SecondaryText);
     m_stream << currentTestRunInfo.name
-        << " is a Catch v" << libraryVersion() << " host application.\n"
+        << " is a Catch2 v" << libraryVersion() << " host application.\n"
         << "Run with -? for options\n\n";
 
     m_stream << "Randomness seeded to: " << m_config->rngSeed() << "\n\n";

@@ -7,6 +7,7 @@
 // SPDX-License-Identifier: BSL-1.0
 #include <catch2/internal/catch_run_context.hpp>
 
+#include <catch2/catch_user_config.hpp>
 #include <catch2/interfaces/catch_interfaces_generatortracker.hpp>
 #include <catch2/interfaces/catch_interfaces_config.hpp>
 #include <catch2/internal/catch_compiler_capabilities.hpp>
@@ -206,7 +207,7 @@ namespace Catch {
             redirectedCerr += oneRunCerr;
 
             const auto singleRunTotals = m_totals.delta(beforeRunTotals);
-            auto statsForOneRun = TestCaseStats(testInfo, singleRunTotals, redirectedCout, oneRunCerr, aborting());
+            auto statsForOneRun = TestCaseStats(testInfo, singleRunTotals, oneRunCout, oneRunCerr, aborting());
 
             m_reporter->testCasePartialEnded(statsForOneRun, testRuns);
             ++testRuns;

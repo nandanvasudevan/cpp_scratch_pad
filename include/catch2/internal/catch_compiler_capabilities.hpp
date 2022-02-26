@@ -25,6 +25,7 @@
 // can be combined, en-mass, with the _NO_ forms later.
 
 #include <catch2/internal/catch_platform.hpp>
+#include <catch2/catch_user_config.hpp>
 
 #ifdef __cplusplus
 
@@ -287,7 +288,9 @@
 #  define CATCH_CONFIG_NEW_CAPTURE
 #endif
 
-#if !defined(CATCH_INTERNAL_CONFIG_EXCEPTIONS_ENABLED) && !defined(CATCH_CONFIG_DISABLE_EXCEPTIONS)
+#if !defined( CATCH_INTERNAL_CONFIG_EXCEPTIONS_ENABLED ) && \
+    !defined( CATCH_CONFIG_DISABLE_EXCEPTIONS ) &&          \
+    !defined( CATCH_CONFIG_NO_DISABLE_EXCEPTIONS )
 #  define CATCH_CONFIG_DISABLE_EXCEPTIONS
 #endif
 
