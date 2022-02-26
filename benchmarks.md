@@ -1,5 +1,9 @@
 # Numeric algorithms
-```
+
+<details>
+<summary>Benchmark results</summary>
+
+```c++
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 scratch_pad_test is a Catch v3.0.0-preview.3 host application.
 Run with -? for options
@@ -112,3 +116,72 @@ transform_reduce                               100           348     4.0716 ms
 test cases: 6 | 6 passed
 assertions: - none -
 ```
+</details>
+
+# std::par is not that good!
+Always slower than `std::accumulate` and `std::reduce` without any execution policies.
+
+<details>
+<summary>Benchmark results</summary>
+
+```c++
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+scratch_pad_test is a Catch v3.0.0-preview.3 host application.
+Run with -? for options
+
+Randomness seeded to: 3519673913
+
+-------------------------------------------------------------------------------
+accumulators
+  Normal execution
+-------------------------------------------------------------------------------
+/home/nandanv/code/C++/scratch_pad/src/numeric.cpp:73
+...............................................................................
+
+benchmark name                       samples       iterations    estimated
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+accumulate - add                               100             1    10.4468 ms 
+                                         92.756 us    92.0961 us    93.3969 us 
+                                        3.34205 us     3.0432 us    3.68202 us 
+                                                                               
+accumulate - multiply                          100             1     9.9123 ms 
+                                        88.6793 us     88.172 us    89.2391 us 
+                                        2.71132 us    2.39379 us    3.08731 us 
+                                                                               
+reduce - add                                   100             1     5.8057 ms 
+                                        50.9555 us    50.7221 us     51.261 us 
+                                        1.35434 us    1.09803 us     1.7306 us 
+                                                                               
+reduce - multiply                              100             1     6.0593 ms 
+                                        53.3025 us     53.078 us    53.5196 us 
+                                         1.1356 us    964.716 ns    1.45423 us 
+                                                                               
+
+Size: 10000
+-------------------------------------------------------------------------------
+accumulators
+  std::execution::par
+-------------------------------------------------------------------------------
+/home/nandanv/code/C++/scratch_pad/src/numeric.cpp:113
+...............................................................................
+
+benchmark name                       samples       iterations    estimated
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+reduce - add                                   100             1    13.1593 ms 
+                                        122.177 us    121.652 us    122.688 us 
+                                        2.63727 us    2.39613 us    2.90825 us 
+                                                                               
+reduce - multiply                              100             1    12.9998 ms 
+                                        123.745 us    123.093 us    124.691 us 
+                                        3.95337 us    2.93767 us     5.7433 us 
+                                                                               
+
+===============================================================================
+test cases: 1 | 1 passed
+assertions: - none -
+```
+</details>

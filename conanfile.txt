@@ -1,12 +1,9 @@
 [requires]
 fmt/8.0.1
-spdlog/1.9.2
-ctre/3.4.1
 
 [generators]
 cmake_find_package
 cmake_paths
-cmake
 
 [imports]
 include, *.h* -> ../../include
