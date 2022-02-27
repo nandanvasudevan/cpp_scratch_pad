@@ -277,3 +277,91 @@ All tests passed (1 assertion in 1 test case)
 Process finished with exit code 0
 ```
 </details>
+
+
+### Huge vector!
+A vector with 200'000'000 items.
+
+`std::for_each` is still so much faster!
+
+<details>
+<summary>Benchmark results</summary>
+
+```c++
+Vector size: 200000000
+for-each accumulator pre-reset: 1
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+scratch_pad_test is a Catch2 v3.0.0-preview.4 host application.
+Run with -? for options
+
+Randomness seeded to: 2292055570
+
+-------------------------------------------------------------------------------
+accumulators
+  std::execution::par
+  std::for_each
+-------------------------------------------------------------------------------
+/home/nandanv/code/C++/scratch_pad/src/numeric.cpp:122
+...............................................................................
+
+benchmark name                       samples       iterations    estimated
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+No policy                                      100             1     2.03273 m 
+                                         1.37019 s     1.36189 s     1.37856 s 
+                                        42.5896 ms    35.4241 ms    56.2441 ms 
+                                                                               
+Sequential                                     100             1     2.23856 m 
+                                         1.52019 s     1.48791 s     1.55091 s 
+                                        160.287 ms    149.574 ms    170.966 ms 
+                                                                               
+Un-sequential                                  100             1     1.11199 m 
+                                        798.151 ms    783.936 ms    812.022 ms 
+                                        71.8176 ms    61.8106 ms    84.6458 ms 
+                                                                               
+Parallel                                       100             1     2.10476 m 
+                                         1.51291 s     1.48273 s     1.54173 s 
+                                        150.221 ms     138.78 ms    161.374 ms 
+                                                                               
+Parallel un-sequential                         100             1     1.10153 m 
+                                        807.043 ms    797.152 ms    814.331 ms 
+                                        43.0654 ms    33.6113 ms    54.5913 ms 
+                                                                               
+
+Vector size: 200000000
+-------------------------------------------------------------------------------
+accumulators
+  std::execution::par
+  std::reduce
+-------------------------------------------------------------------------------
+/home/nandanv/code/C++/scratch_pad/src/numeric.cpp:170
+...............................................................................
+
+benchmark name                       samples       iterations    estimated
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+No policy                                      100             1     2.18182 m 
+                                         1.37452 s     1.34895 s     1.39815 s 
+                                        125.164 ms    114.851 ms    135.933 ms 
+                                                                               
+Sequential                                     100             1     3.73969 m 
+                                         2.11204 s     2.07917 s     2.14216 s 
+                                        160.878 ms    147.482 ms    173.707 ms 
+                                                                               
+Un-sequential                                  100             1       3.161 m 
+                                         2.13319 s     2.09989 s     2.16396 s 
+                                         163.31 ms    150.229 ms    175.634 ms 
+                                                                               
+Parallel                                       100             1     3.71497 m 
+                                         2.09728 s     2.06288 s     2.12985 s 
+                                         170.57 ms    159.008 ms    182.118 ms 
+                                                                               
+Parallel un-sequential                         100             1     3.96575 m 
+                                         2.20307 s      2.1661 s     2.23776 s 
+                                        183.075 ms    171.397 ms    193.261 ms 
+```
+
+</details>
