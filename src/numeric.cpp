@@ -25,7 +25,7 @@ static const std::string CATCH_CAN_SKIP_THIS = "[.]";
 static const std::string sTestCase_Numeric = "[numeric]";
 static constexpr size_t DEFAULT_CONTAINER_SIZE = 10'000;
 
-using type_t = double;
+using type_t = ssize_t;
 
 template<typename container_t>
 void
@@ -68,73 +68,155 @@ TEST_CASE("generate",
 }
 
 TEST_CASE("accumulators",
-          /*CATCH_CAN_SKIP_THIS +*/ sTestCase_Numeric)
+/*CATCH_CAN_SKIP_THIS +*/
+          sTestCase_Numeric)
 {
-    SECTION("Normal execution")
-    {
-        std::vector<type_t> vSeries(DEFAULT_CONTAINER_SIZE);
-        std::generate(vSeries.begin(),
-                      vSeries.end(),[n = 9988856450.0] mutable { return n += 1; });
-        fmt::print("Size: {}\n",
-                   vSeries.size());
+    static auto fnXOR = [](auto result, auto value) {
+        return result ^ value;
+    };
 
-        BENCHMARK("accumulate - add")
-                    {
-                        return std::accumulate(vSeries.cbegin(),
-                                               vSeries.cend(),
-                                               1,
-                                               std::plus{});
-                    };
-
-        BENCHMARK("accumulate - multiply")
-                    {
-                        return std::accumulate(vSeries.cbegin(),
-                                               vSeries.cend(),
-                                               1,
-                                               std::multiplies{});
-                    };
-        BENCHMARK("reduce - add")
-                    {
-                        return std::reduce(vSeries.cbegin(),
-                                           vSeries.cend(),
-                                           1,
-                                           std::plus{});
-                    };
-
-        BENCHMARK("reduce - multiply")
-                    {
-                        return std::reduce(vSeries.cbegin(),
-                                           vSeries.cend(),
-                                           1,
-                                           std::multiplies{});
-                    };
-    }
+//    SECTION("Normal execution")
+//    {
+//        std::vector<type_t> vSeries(DEFAULT_CONTAINER_SIZE);
+//        std::generate(vSeries.begin(),
+//                      vSeries.end(),[n = 9988856450] mutable { return n += 1; });
+//        fmt::print("Size: {}\n",
+//                   vSeries.size());
+//
+//
+//        BENCHMARK("accumulate - add")
+//                    {
+//                        return std::accumulate(vSeries.cbegin(),
+//                                               vSeries.cend(),
+//                                               1,
+//                                               std::plus{});
+//                    };
+//
+//        BENCHMARK("accumulate - multiply")
+//                    {
+//                        return std::accumulate(vSeries.cbegin(),
+//                                               vSeries.cend(),
+//                                               1,
+//                                               std::multiplies{});
+//                    };
+//    }
 
     SECTION("std::execution::par")
     {
+        static ssize_t iResult = 0;
+        static ssize_t iAccumulator = 1;
+
         std::vector<type_t> vSeries(DEFAULT_CONTAINER_SIZE);
         std::generate(vSeries.begin(),
-                      vSeries.end(),[n = 9988856450.0] mutable { return n += 1; });
-        fmt::print("Size: {}\n",
-                   vSeries.size());
+                      vSeries.end(),[n = 9988856450] mutable { return n += 1; });
 
-        BENCHMARK("reduce - add")
-                    {
-                        return std::reduce(std::execution::par_unseq,
-                                           vSeries.cbegin(),
-                                           vSeries.cend(),
-                                           1,
-                                           std::plus{});
-                    };
+        SECTION("std::for_each")
+        {
+            fmt::print("for-each accumulator pre-reset: {}",
+                       iAccumulator);
 
-        BENCHMARK("reduce - multiply")
-                    {
-                        return std::reduce(std::execution::par_unseq,
-                                           vSeries.cbegin(),
-                                           vSeries.cend(),
-                                           1,
-                                           std::multiplies{});
-                    };
+            iAccumulator = 1;
+            BENCHMARK("No policy")
+                        {
+                            std::for_each(vSeries.cbegin(),
+                                          vSeries.cend(),
+                                          [](auto value) {
+                                              iAccumulator ^= value;
+                                          });
+                        };
+
+            iAccumulator = 1;
+            BENCHMARK("Sequential")
+                        {
+                            std::for_each(std::execution::seq,
+                                          vSeries.cbegin(),
+                                          vSeries.cend(),
+                                          [](auto value) {
+                                              iAccumulator ^= value;
+                                          });
+                        };
+            iAccumulator = 1;
+            BENCHMARK("Un-sequential")
+                        {
+                            std::for_each(std::execution::unseq,
+                                          vSeries.cbegin(),
+                                          vSeries.cend(),
+                                          [](auto value) {
+                                              iAccumulator ^= value;
+                                          });
+                        };
+            iAccumulator = 1;
+            BENCHMARK("Parallel")
+                        {
+                            std::for_each(std::execution::par,
+                                          vSeries.cbegin(),
+                                          vSeries.cend(),
+                                          [](auto value) {
+                                              iAccumulator ^= value;
+                                          });
+                        };
+            iAccumulator = 1;
+            BENCHMARK("Parallel un-sequential")
+                        {
+                            std::for_each(std::execution::par_unseq,
+                                          vSeries.cbegin(),
+                                          vSeries.cend(),
+                                          [](auto value) {
+                                              iAccumulator ^= value;
+                                          });
+                        };
+
+        }
+
+        SECTION("std::reduce")
+        {
+
+            BENCHMARK("No policy")
+                        {
+                            return std::reduce(vSeries.cbegin(),
+                                               vSeries.cend(),
+                                               1,
+                                               fnXOR);
+                        };
+            BENCHMARK("Sequential")
+                        {
+                            return std::reduce(std::execution::seq,
+                                               vSeries.cbegin(),
+                                               vSeries.cend(),
+                                               1,
+                                               fnXOR);
+                        };
+
+            BENCHMARK("Un-sequential")
+                        {
+                            return std::reduce(std::execution::unseq,
+                                               vSeries.cbegin(),
+                                               vSeries.cend(),
+                                               1,
+                                               fnXOR);
+                        };
+
+            BENCHMARK("Parallel")
+                        {
+                            return std::reduce(std::execution::par,
+                                               vSeries.cbegin(),
+                                               vSeries.cend(),
+                                               1,
+                                               fnXOR);
+                        };
+
+            BENCHMARK("Parallel un-sequential")
+                        {
+                            iResult = std::reduce(std::execution::par_unseq,
+                                                  vSeries.cbegin(),
+                                                  vSeries.cend(),
+                                                  1,
+                                                  fnXOR);
+                            return iResult;
+                        };
+
+            CHECK(iResult == iAccumulator);
+        }
     }
 }
 

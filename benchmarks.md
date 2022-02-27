@@ -185,3 +185,95 @@ test cases: 1 | 1 passed
 assertions: - none -
 ```
 </details>
+
+## for_each vs reduce
+The `std::for_each` algorithm seems to respond better to modifications in execution policy.
+
+In the example of XOR, non-sequential execution was **almost thrice as fast** (parallel helped a bit) 
+than sequential or no policy variants.
+
+However, it is the same old for `std::reduce` with **no-policy being the fastest**.
+
+<details>
+<summary>Benchmark results</summary>
+
+```c++
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+scratch_pad_test is a Catch2 v3.0.0-preview.4 host application.
+Run with -? for options
+
+Randomness seeded to: 928077540
+
+-------------------------------------------------------------------------------
+accumulators
+  std::execution::par
+  std::for_each
+-------------------------------------------------------------------------------
+/home/nandanv/code/C++/scratch_pad/src/numeric.cpp:113
+...............................................................................
+
+benchmark name                       samples       iterations    estimated
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+No policy                                      100             1     9.6265 ms 
+                                         59.361 us    59.2471 us    59.5617 us 
+                                        751.825 ns    509.327 ns    1.19671 us 
+                                                                               
+Sequential                                     100             1     6.3999 ms 
+                                        57.4006 us    57.2318 us    57.6433 us 
+                                        1.02222 us    777.218 ns    1.26438 us 
+                                                                               
+Un-sequential                                  100             2     6.3872 ms 
+                                        26.2431 us    25.6457 us    26.8152 us 
+                                         2.9694 us    2.81181 us    3.06365 us 
+                                                                               
+Parallel                                       100             1     6.3127 ms 
+                                        56.1166 us     55.964 us    56.4133 us 
+                                        1.04948 us    618.989 ns    1.91024 us 
+                                                                               
+Parallel un-sequential                         100             2     6.3086 ms 
+                                        28.5069 us    28.4253 us    28.5933 us 
+                                        428.195 ns    379.464 ns    543.032 ns 
+                                                                               
+
+-------------------------------------------------------------------------------
+accumulators
+  std::execution::par
+  std::reduce
+-------------------------------------------------------------------------------
+/home/nandanv/code/C++/scratch_pad/src/numeric.cpp:171
+...............................................................................
+
+benchmark name                       samples       iterations    estimated
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+No policy                                      100             2      7.505 ms 
+                                        32.8872 us    32.7192 us    33.1661 us 
+                                        1.07644 us    725.819 ns      1.967 us 
+                                                                               
+Sequential                                     100             1      6.926 ms 
+                                        48.9318 us    48.7728 us    49.1175 us 
+                                        876.651 ns    759.424 ns    1.22789 us 
+                                                                               
+Un-sequential                                  100             1     9.3556 ms 
+                                         88.447 us    88.2257 us    88.6884 us 
+                                        1.18129 us    1.10354 us    1.28753 us 
+                                                                               
+Parallel                                       100             1     5.5609 ms 
+                                        49.6951 us    49.4041 us    50.0184 us 
+                                        1.55591 us    1.42439 us     1.8878 us 
+                                                                               
+Parallel un-sequential                         100             1     9.1912 ms 
+                                        87.6513 us    87.5655 us    87.8266 us 
+                                         600.31 ns    337.826 ns    962.908 ns 
+                                                                               
+
+===============================================================================
+All tests passed (1 assertion in 1 test case)
+
+
+Process finished with exit code 0
+```
+</details>
