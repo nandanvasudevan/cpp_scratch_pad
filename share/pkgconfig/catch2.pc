@@ -1,0 +1,11 @@
+prefix=/home/nandanv/code/C++/scratch_pad
+exec_prefix=${prefix}
+includedir=/home/nandanv/code/C++/scratch_pad/include
+libdir=/home/nandanv/code/C++/scratch_pad/lib
+
+Name: Catch2
+Description: A modern, C++-native, test framework for C++14 and above
+URL: https://github.com/catchorg/Catch2
+Version: 3.0.0
+Cflags: -I${includedir}
+Libs: -L${libdir} -lCatch2
