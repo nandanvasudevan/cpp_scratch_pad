@@ -4,8 +4,6 @@ project(scratch_pad)
 set(CMAKE_CXX_STANDARD 23)
 
 include(./build/conan/conanbuildinfo.cmake)
-#include(./build/conan/conan_paths.cmake)
-#include(./build/conan/Findfmt.cmake)
 
 include_directories(./include)
 
@@ -22,7 +20,6 @@ find_package(Catch2 CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 
-#find_package(fmt)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CONAN_LIBS})
 
 add_executable(${PROJECT_NAME}_test src/main.cpp)
