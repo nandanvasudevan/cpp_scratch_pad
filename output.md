@@ -1,5 +1,9 @@
 # Benchmark results
 
+Catch2: v3.0.1 
+Branch: devel 
+Commit: 38575480e775e6b99c0b8da6669db2593470d7fa
+
 ## Random UUID generator
 
 **Verdict**: Boost is considerably faster than the POSIX version.
