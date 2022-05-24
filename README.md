@@ -8,6 +8,9 @@ The question I would like the answer for is '*Does it really matter?*'.
 
 [Benchmark results](output.md)
 
+## Does it really matter?
+In situations where you generated these infrequently, probably not.
+
 # Summary
 - Use the POSIX time based generators if you just need a UUID.
   - Do not use the random as it is significantly slower!
