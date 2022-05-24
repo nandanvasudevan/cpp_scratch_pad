@@ -1,3 +1,7 @@
-# C++ Scratch Pad
+# Testing GUID generators
 
-Just a repo to try out C++!
+The libraries tested here are:
+ 1. Boost::uuid
+ 2. libuuid (linux)
+
+The question I would like the answer for is '*Does it really matter?*'.

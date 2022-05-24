@@ -1,20 +1,31 @@
-#include <fmt/format.h>
-#include <fmt/color.h>
-#include <catch2/catch_all.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/benchmark/catch_benchmark.hpp>
 
-static const std::string CATCH_CAN_SKIP_THIS = "[.]";
+#include <boost/uuid/random_generator.hpp>
 
-TEST_CASE("Format without text_style",
-          "[fmt][format]")
+#include <uuid/uuid.h>
+
+TEST_CASE("Random UUID generator",
+          "[random]")
 {
-    enum class EColor {
-        red, green, blue
-    };
-    using fmt::enums::format_as;
+    boost::uuids::random_generator gen;
+    boost::uuids::random_generator_mt19937 bulkgen;
 
-//    const std::string sTest = fmt::to_string((int) EColor::red);
-    const std::string sTest = fmt::format("{}",
-                                          (int) EColor::red);
+    BENCHMARK("[boost] Simple random")
+                {
+                    return gen();
+                };
 
-    CHECK(sTest == "0");
+    BENCHMARK("[boost] Bulk generator")
+                {
+                    boost::uuids::uuid u = bulkgen();
+                    return u;
+                };
+
+    BENCHMARK("POSIX")
+                {
+                    uuid_t uuid;
+                    uuid_generate_random(uuid);
+                    return *uuid;
+                };
 }
