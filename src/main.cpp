@@ -1,22 +1,19 @@
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/benchmark/catch_benchmark.hpp>
-#include <catch2/benchmark/catch_chronometer.hpp>
+#include <catch2/catch_approx.hpp>
 
-#include <fmt/core.h>
-#include <fmt/printf.h>
-
-#include <sigc++/functors/ptr_fun.h>
 #include <sigc++/slot.h>
 
 static constexpr const char *const sTag = "[sigc]";
 
-double add(int a, int b);
-double add(double a, double b);
+double add(int a, int b) { return a + b; };
+
+double add(double a, double b) { return a + b; };
 
 TEST_CASE("Overloaded function pointers",
           sTag)
 {
-    auto oSlot = sigc::ptr_fun<double,int,int>(add);
+    auto oSlot = sigc::ptr_fun<double, int, int>(add);
 
-    fmt::print("{1}", oSlot(1,2));
+    CHECK(Catch::Approx(3).margin(0.0001) == oSlot(1,
+                                                   2));
 }
