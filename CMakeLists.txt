@@ -16,6 +16,13 @@ conan_basic_setup()
 set(LIBS lib)
 set(Catch2_DIR ${LIBS}/cmake/Catch2)
 
+find_package(PkgConfig)
+pkg_check_modules(SIGC sigc++-3.0)
+link_directories(
+        ${SIGC_LIBRARY_DIRS})
+include_directories(
+        ${SIGC_INCLUDE_DIRS})
+
 find_package(Catch2 CONFIG REQUIRED)
 find_package( Boost 1.74 COMPONENTS program_options REQUIRED )
 include_directories( ${Boost_INCLUDE_DIR} )
@@ -27,5 +34,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${CONAN_LIBS})
 add_executable(${PROJECT_NAME}_test src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_test PRIVATE Catch2::Catch2WithMain)
 target_link_libraries(${PROJECT_NAME}_test PRIVATE Catch2::Catch2)
-target_link_libraries(${PROJECT_NAME}_test PRIVATE ${CONAN_LIBS})
+#target_link_libraries(${PROJECT_NAME}_test PRIVATE ${CONAN_LIBS})
 target_link_libraries(${PROJECT_NAME}_test PRIVATE uuid)
