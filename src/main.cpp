@@ -10,7 +10,7 @@ TEST_CASE("Format without text_style",
     enum class EColor {
         red, green, blue
     };
-    using fmt::enums::format_as;
+//    using fmt::enums::format_as;
 
 //    const std::string sTest = fmt::to_string((int) EColor::red);
     const std::string sTest = fmt::format("{}",
