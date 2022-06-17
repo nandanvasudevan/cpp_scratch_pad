@@ -2,6 +2,7 @@
 // Created by nandanv on 17/6/22.
 //
 #include <cmath>
+#include <iomanip>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -12,8 +13,20 @@
 
 static const std::string sTag = "vs_Glib::ustring";
 
+Glib::ustring Glib_FormatDouble(const double dValue, const int iDecimals) {
+    return Glib::ustring::format(std::setprecision(iDecimals),
+                                 std::fixed,
+                                 dValue);
+}
+
+Glib::ustring fmt_FormatDouble(const double dValue, const int iDecimals) {
+    return fmt::format("{0:.{1}f}",
+                       dValue,
+                       iDecimals);
+}
+
 TEST_CASE("Simple format",
-          sTag)
+          sTag + "[.]")
 {
     BENCHMARK("{fmt}")
                 {
@@ -40,7 +53,7 @@ TEST_CASE("Simple format",
 }
 
 TEST_CASE("Float format",
-          sTag)
+          sTag + "[.]")
 {
     BENCHMARK("{fmt}")
                 {
@@ -64,4 +77,23 @@ TEST_CASE("Float format",
                     return Glib::ustring::compose("%1",
                                                   M_PI);
                 };
+}
+
+TEST_CASE("Custom decimals")
+{
+    for (int iDecimals = 0; iDecimals < 15; iDecimals++) {
+        DYNAMIC_SECTION("Decimals: " << iDecimals) {
+            BENCHMARK("{fmt} to Glib::ustring")
+                        {
+                            return fmt_FormatDouble(M_PI,
+                                                    iDecimals);
+                        };
+
+            BENCHMARK("Glib::ustring::format")
+                        {
+                            return Glib_FormatDouble(M_PI,
+                                                     iDecimals);
+                        };
+        }
+    }
 }
