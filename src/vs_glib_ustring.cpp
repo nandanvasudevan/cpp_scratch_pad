@@ -21,6 +21,12 @@ TEST_CASE("Simple format",
                                        10);
                 };
 
+    BENCHMARK("{fmt} to Glib::ustring")
+                {
+                    return Glib::ustring(fmt::format("{}",
+                                                     10));
+                };
+
     BENCHMARK("Glib::ustring::format")
                 {
                     return Glib::ustring::format(10);
@@ -41,6 +47,13 @@ TEST_CASE("Float format",
                     return fmt::format("{}",
                                        M_PI);
                 };
+
+    BENCHMARK("{fmt} to Glib::ustring")
+                {
+                    return Glib::ustring(fmt::format("{}",
+                                                     M_PI));
+                };
+
     BENCHMARK("Glib::ustring::format")
                 {
                     return Glib::ustring::format(M_PI);
