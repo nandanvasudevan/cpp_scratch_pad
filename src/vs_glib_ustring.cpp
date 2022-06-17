@@ -20,12 +20,19 @@ TEST_CASE("Simple format",
                     return fmt::format("{}",
                                        10);
                 };
-    BENCHMARK("Glib::ustring")
+
+    BENCHMARK("Glib::ustring::format")
+                {
+                    return Glib::ustring::format(10);
+                };
+
+    BENCHMARK("Glib::ustring::compose")
                 {
                     return Glib::ustring::compose("%1",
                                                   10);
                 };
 }
+
 TEST_CASE("Float format",
           sTag)
 {
@@ -34,7 +41,12 @@ TEST_CASE("Float format",
                     return fmt::format("{}",
                                        M_PI);
                 };
-    BENCHMARK("Glib::ustring")
+    BENCHMARK("Glib::ustring::format")
+                {
+                    return Glib::ustring::format(M_PI);
+                };
+
+    BENCHMARK("Glib::ustring::compose")
                 {
                     return Glib::ustring::compose("%1",
                                                   M_PI);
