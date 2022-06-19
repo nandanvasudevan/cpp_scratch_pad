@@ -25,6 +25,25 @@ Glib::ustring fmt_FormatDouble(const double dValue, const int iDecimals) {
                        iDecimals);
 }
 
+Glib::ustring snprintf_FormatDouble(const double dValue, const int iDecimals) {
+    char sBuffer[20];
+
+    {
+        char sFormat[8];
+
+        snprintf(sFormat,
+                 sizeof(sFormat),
+                 "%%0.%df",
+                 iDecimals);
+        snprintf(sBuffer,
+                 sizeof(sBuffer),
+                 sFormat,
+                 dValue);
+    }
+
+    return Glib::ustring(sBuffer);
+}
+
 std::pair<int, int> BreakDouble(const double dValue, const int iDecimals) {
     const int iWhole = static_cast<int>(dValue);
     const int iDecimal = static_cast<int>((dValue - static_cast<double>(iWhole)) * pow(10,
@@ -51,6 +70,21 @@ Glib::ustring fmt_FormatDoubleArithmetic(const double dValue, const int iDecimal
                        iDecimal);
 }
 
+Glib::ustring snprintf_FormatDoubleArithmetic(const double dValue, const int iDecimals) {
+    char sBuffer[50] = {};
+
+    auto [iWhole, iDecimal] = BreakDouble(dValue,
+                                          iDecimals);
+
+    snprintf(sBuffer,
+             sizeof(sBuffer),
+             "%d.%d",
+             iWhole,
+             iDecimal);
+
+    return Glib::ustring(sBuffer);
+}
+
 TEST_CASE("Simple format",
           sTag + "[.]")
 {
@@ -64,6 +98,26 @@ TEST_CASE("Simple format",
                 {
                     return Glib::ustring(fmt::format("{}",
                                                      10));
+                };
+
+    BENCHMARK("snprintf")
+                {
+                    char sBuffer[10];
+                    snprintf(sBuffer,
+                             sizeof(sBuffer),
+                             "%d",
+                             10);
+                    return sBuffer;
+                };
+
+    BENCHMARK("snprintf to Glib::ustring")
+                {
+                    char sBuffer[10];
+                    snprintf(sBuffer,
+                             sizeof(sBuffer),
+                             "%d",
+                             10);
+                    return Glib::ustring(sBuffer);
                 };
 
     BENCHMARK("Glib::ustring::format")
@@ -105,7 +159,8 @@ TEST_CASE("Float format",
                 };
 }
 
-TEST_CASE("Custom decimals")
+TEST_CASE("Custom decimals",
+          sTag /*+ "[.]"*/)
 {
     SECTION("Test")
     {
@@ -122,6 +177,11 @@ TEST_CASE("Custom decimals")
                                                                             9));
         REQUIRE(Glib::ustring("3.141592653") == fmt_FormatDoubleArithmetic(M_PI,
                                                                            9));
+
+        REQUIRE_FALSE(Glib::ustring("3.141592653") == snprintf_FormatDouble(M_PI,
+                                                                            9));
+        REQUIRE(Glib::ustring("3.141592654") == snprintf_FormatDouble(M_PI,
+                                                                      9));
     }
 
     static constexpr int iMaxDecimals = 15;
@@ -135,11 +195,18 @@ TEST_CASE("Custom decimals")
                                                         iDecimals);
                             };
 
+                BENCHMARK("snprintf")
+                            {
+                                return snprintf_FormatDouble(M_PI,
+                                                             iDecimals);
+                            };
+
                 BENCHMARK("Glib::ustring::format")
                             {
                                 return Glib_FormatDouble(M_PI,
                                                          iDecimals);
                             };
+
             }
         }
     }
@@ -152,6 +219,12 @@ TEST_CASE("Custom decimals")
                             {
                                 return fmt_FormatDoubleArithmetic(M_PI,
                                                                   iDecimals);
+                            };
+
+                BENCHMARK("snprintf to Glib::ustring")
+                            {
+                                return snprintf_FormatDoubleArithmetic(M_PI,
+                                                                       iDecimals);
                             };
 
                 BENCHMARK("Glib::ustring::format")

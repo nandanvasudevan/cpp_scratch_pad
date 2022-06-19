@@ -7,7 +7,7 @@ include(./build/conan/conanbuildinfo.cmake)
 
 include_directories(./include)
 
-add_compile_options(-Wall -Wextra -Wconversion)
+add_compile_options(-O3 -Wall -Wextra -Wconversion)
 
 # Set global property (all targets are impacted)
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")

@@ -1,3 +1,3 @@
-# C++ Scratch Pad
+# Fun with `fmt`
 
-Just a repo to try out C++!
+[Findings are here!](output.md)
